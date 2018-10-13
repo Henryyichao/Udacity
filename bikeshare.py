@@ -9,6 +9,16 @@ CITY_DATA = { 'chicago': 'chicago.csv',
 months = ['january', 'february', 'march', 'april', 'may', 'june','july','august','september','october','november','december',"all"]
 days = ['monday','tuesday','wensday','thursday','friday','saturday','sunday','all']
 
+
+def input_check(v_list, input_message, error_message):
+    v = input(input_message).lower()
+    while v not in v_list:
+        print(error_message)
+        v = v.replace(v,input("try again.\n").lower())
+    else:
+        return v
+
+
 def get_filters():
     """
     Asks user to specify a city, month, and day to analyze.
@@ -20,20 +30,18 @@ def get_filters():
     """
     print('Hello! Let\'s explore some US bikeshare data!')
     # TO DO: get user input for city (chicago, new york city, washington). HINT: Use a while loop to handle invalid input
-    city = input("Would you like to see data for Chicago,New York,or Washington?").lower()
-    while city not in CITY_DATA.keys():
-        print("please choose from the Chicago,New York and Washington")
-        city = input("Would you like to see data for Chicago,New York,or Washington?").lower()
+
+    city = input_check(CITY_DATA.keys(),"Would you like to see data for Chicago,New York,or Washington?\n","please choose from the Chicago,New York and Washington.")
+	
     # TO DO: get user input for month (all, january, february, ... , june)
-    month =input("which month would like to explore?input the month name.You can also input'all' to reach all data.").lower()
-    while month not in months:
-        print("Sorry,please choose one month from January,February...December.Or type 'all'to reach all data.")
-        month =input("which month would like to explore?input the month name.You can also input'all' to reach all data.").lower()
+
+    month = input_check(months,"which month would like to explore?input the month name.You can also input'all' to reach all data.\n","Sorry,please choose one month from January,February...December.Or type 'all'to reach all data.")
+
     # TO DO: get user input for day of week (all, monday, tuesday, ... sunday)
-    day = input("which day would like to explore?Monday,Tuesday..or you input'all' to reach all data. ").lower()
-    while day not in days:
-        print("Sorry,please choose day from Monday,Tuesday...Sunday.Or type 'all'to reach all data.")
-        day = input("which day would like to explore?Monday,Tuesday..or you input'all' to reach all data. ").lower()
+
+    day = input_check(days,"which day would like to explore?Monday,Tuesday..or you input'all' to reach all data. \n","Sorry,please choose day from Monday,Tuesday...Sunday.Or type 'all'to reach all data.")
+
+
     print('-'*40)
     return city, month, day
 
@@ -56,13 +64,13 @@ def load_data(city, month, day):
         month = months.index(month) + 1
         # filter by month to create the new dataframe
         df = df[df['month'] == month]
-    
-    # filter by day of week if applicable
-    if day != 'all':
-        # filter by day of week to create the new dataframe
-        df = df[df['day_of_week'] == day.title()]
-        return df
 
+    # filter by day of week if applicable
+        if day != 'all':
+        # filter by day of week to create the new dataframe
+            df = df[df['day_of_week'] == day.title()]
+
+    return df
 
 def time_stats(df):
     """Displays statistics on the most frequent times of travel."""
@@ -107,7 +115,7 @@ def station_stats(df):
     print("the most common end staition is :",end_staition,"counts:",e_counts.max())
 
     # TO DO: display most frequent combination of start station and end station trip
-    top = df.groupby(['Start Station', 'End Station']).
+    top = df.groupby(['Start Station', 'End Station']).size().idxmax()
     #Series 中还有一对 ser.idxmax() 和 ser.idxmin() 方法，可以返回数组中最大（小）值的索引值，或者 .argmin()和 .argmax() 返回索引位置。当然这两类方法也是可以通过上面这种 ser[ser=ser.max()] 来替代实现的。
     print("The most frequent combination of start station and end station trip is {} to {}".format(top[0], top[1]))
 
@@ -172,7 +180,7 @@ def user_stats(df):
 def main():
     while True:
         city, month, day = get_filters()
-
+        print(month)
         df = load_data(city, month, day)
         print(df)
         time_stats(df)
